@@ -1,0 +1,188 @@
+{
+  "name": "My workflow 10",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1Ebz-TocjHQcxEvBINGHgulfTY9Geauu-FH3XxI4wuTQ",
+          "mode": "list",
+          "cachedResultName": "Untitled form (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ebz-TocjHQcxEvBINGHgulfTY9Geauu-FH3XxI4wuTQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 900809362,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ebz-TocjHQcxEvBINGHgulfTY9Geauu-FH3XxI4wuTQ/edit#gid=900809362"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4de01486-0293-4680-9d79-c249e68ab898",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "vAZLiJA3Xj08puQl",
+          "name": "Google Sheets Trigger account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=customer name: {{$json[\"customer name\"]}}\ncompany name: {{$json[\"company name\"]}}\nservice: {{$json[\"service\"]}}\namount: {{$json[\"amount\"]}}\npayment status: {{$json[\"payment status\"]}}\n\nWrite a professional invoice summary for the customer in under 100 words.",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0d0f6ff9-db3a-435d-b290-4a9d1947b234",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        64,
+        208
+      ],
+      "id": "51209616-ad26-4945-8fcd-d82631202975",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "fJj0fw0JZOnMqTHP",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "ssoni342009@gmail.com",
+        "subject": "thankyou",
+        "emailType": "text",
+        "message": "Hello {{$json[\"customer name\"]}},\n\nThank you for contacting us regarding {{$json[\"service\"]}}.\n\nWe have received your request and our team will contact you shortly.\n\nBest regards,\nYour Company",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "d3659259-6683-40b9-a63c-2394a8c7d560",
+      "name": "Send a message",
+      "webhookId": "71d8224d-4c4f-49d1-8295-6a537cc626bf",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IzvYRqV4Etih9DTN",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8188256821",
+        "text": "Hello {{$json[\"customer name\"]}},  Thank you for contacting us regarding {{$json[\"service\"]}}.  We have received your request and our team will contact you shortly.  Best regards, Your Company",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        0
+      ],
+      "id": "1da3df26-f397-49e1-850f-58b6f0f32c86",
+      "name": "Send a text message",
+      "webhookId": "cd0dd2b9-9117-4b9b-a0f7-d69fcf6ce027",
+      "credentials": {
+        "telegramApi": {
+          "id": "LMZMRPtbyPtPItBk",
+          "name": "Telegram account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "93cfe650-5f79-4a4d-972d-f364086e517a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e62c293b163ce67adb7cea8bbda121cd5f5c33b53bf5d14a578f39f946e855da"
+  },
+  "nodeGroups": [],
+  "id": "iUafUNGLMieLpibE",
+  "tags": []
+}
