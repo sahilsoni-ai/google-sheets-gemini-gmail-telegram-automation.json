@@ -1,0 +1,271 @@
+{
+  "name": "AI LEAD AUTO RESPONDER",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1ByhaTdlavmMPjHrumaCZEF-nJKEpEpMIe_11r_yNsaA",
+          "mode": "list",
+          "cachedResultName": "Untitled form (ResponsCOMPANYYYes)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ByhaTdlavmMPjHrumaCZEF-nJKEpEpMIe_11r_yNsaA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 27202144,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ByhaTdlavmMPjHrumaCZEF-nJKEpEpMIe_11r_yNsaA/edit#gid=27202144"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -128
+      ],
+      "id": "4b21b148-13e9-4f34-bcc5-1b665846cf91",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "vAZLiJA3Xj08puQl",
+          "name": "Google Sheets Trigger account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Customer Name: {{$json[\"Full Name\"]}}\nCompany: {{$json[\"Company Name\"]}}\nService: {{$json[\"What service do you need?\"]}}\nBudget: {{$json[\"Budget\"]}}\n\nWrite a professional email reply thanking the customer and asking that we will contact them soon.",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        -128
+      ],
+      "id": "9f8872af-d446-467e-97c9-a3d2e0899478",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        96
+      ],
+      "id": "7f398c4d-bd92-4d8c-b41d-c1c8c6e8d905",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "fJj0fw0JZOnMqTHP",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "ssoni342009@gmail.com",
+        "subject": "THANKYOU FOR CONTACTING US",
+        "message": "Hello,  Thank you for contacting us.  We have received your request and will get back to you soon.  Regards, Support Team",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        -128
+      ],
+      "id": "d5b108c5-afda-47e5-9575-cd13004ff0ca",
+      "name": "Send a message",
+      "webhookId": "646eb2ff-2003-41d1-b7ed-681a5180b01c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IzvYRqV4Etih9DTN",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6c06b857-2d56-4b3e-b5f5-cefa5b79a919",
+              "leftValue": "={{$node[\"Google Sheets Trigger\"].json[\"BUDGET\"]}}",
+              "rightValue": 4999,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        736,
+        -128
+      ],
+      "id": "f6196051-c3a0-40a7-8f66-5ff70df02183",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "ssoni342009@gmail.com",
+        "subject": "HIGH BUDGET LEAD RECEIVED",
+        "message": "=New High Budget Lead\n\nName: {{$json[\"FULL NAME\"]}}\nCompany: {{$json[\"COMPANY NAME\"]}}\nService: {{$json[\"What service do you need?\"]}}\nBudget: {{$json[\"BUDGET\"]}}\nEmail: {{$json[\"EMAIL\"]}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        80
+      ],
+      "id": "ecbdc8be-fe59-4b27-b4d2-a825b5c7c66f",
+      "name": "Send a message1",
+      "webhookId": "7a9606c3-56b1-484e-8cc5-d6dff14fffeb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IzvYRqV4Etih9DTN",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=8188256821",
+        "text": "HIGH BUDGET ORDER ALERT",
+        "replyMarkup": "=none",
+        "forceReply": {},
+        "replyKeyboardOptions": {},
+        "replyKeyboardRemove": {},
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        80
+      ],
+      "id": "d54ed5f8-6d98-4bdd-8a60-badeaf7fed5e",
+      "name": "Send a text message",
+      "webhookId": "88a493c1-19a4-4774-afd9-e502f8ea54ba",
+      "credentials": {
+        "telegramApi": {
+          "id": "LMZMRPtbyPtPItBk",
+          "name": "Telegram account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "487ef5d3-133f-4afa-8f71-aca95af5c2be",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e62c293b163ce67adb7cea8bbda121cd5f5c33b53bf5d14a578f39f946e855da"
+  },
+  "nodeGroups": [],
+  "id": "j10F9XXESzQg2vS5",
+  "tags": []
+}
